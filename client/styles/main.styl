@@ -1,0 +1,44 @@
+*
+  margin: 0
+  padding: 0
+
+slideMargin = 80px
+textHeight = 200px
+outputHeight = 200px
+errorHeight = 20px
+pageButtonWidth = 100px
+
+.deck
+  background-color: #88f
+  position: absolute
+  width: 100%
+  height: 100%
+
+  .prev-button, .next-button
+    position: absolute
+    width: pageButtonWidth
+    top: 0
+    bottom: 0
+    background-color: #ff8
+
+  .prev-button
+    left: 0
+  .next-button
+    right: 0
+
+  .slides
+    padding: slideMargin
+    box-sizing: border-box
+    white-space: nowrap
+    background-color: #8f8
+    position: absolute
+    left: pageButtonWidth
+    right: pageButtonWidth
+    overflow-x: auto
+    overflow-y: hidden
+    height: 100%
+    .slide
+      vertical-align: top
+      @import "slide"
+    .slide + .slide
+      margin-left: slideMargin
