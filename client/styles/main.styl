@@ -2,11 +2,14 @@
   margin: 0
   padding: 0
 
+body
+  font-family: 'Helvetica Nueue', 'Helvetica', sans-serif
+
 slideMargin = 80px
 textHeight = 200px
 outputHeight = 200px
-errorHeight = 20px
 pageButtonWidth = 100px
+lineHeight = 20px
 
 pageButtonHeight = 50px
 
@@ -16,14 +19,14 @@ pageButtonHeight = 50px
   width: 100%
   height: 100%
 
-  .prev-button, .next-button
+  > .prev-button, > .next-button
     position: absolute
     width: pageButtonWidth
     top: 0
     bottom: 0
     background-color: #ff8
     cursor: pointer
-    i
+    > i
       position: absolute
       top: 50%
       margin-top: -(pageButtonHeight / 2)
@@ -35,12 +38,12 @@ pageButtonHeight = 50px
     &:hover
       background-color: #ee7
 
-  .prev-button
+  > .prev-button
     left: 0
-  .next-button
+  > .next-button
     right: 0
 
-  .slides
+  > .slides
     padding: slideMargin
     box-sizing: border-box
     white-space: nowrap
@@ -48,11 +51,19 @@ pageButtonHeight = 50px
     position: absolute
     left: pageButtonWidth
     right: pageButtonWidth
-    overflow-x: auto
-    overflow-y: hidden
+    overflow: hidden
     height: 100%
-    .slide
+    > *
       vertical-align: top
-      @import "slide"
-    .slide + .slide
+      white-space: normal
+      background-color: #f88
+      display: inline-block
+      width: 100%
+      position: relative
+      height: 100%
+    > .code-slide
+      @import 'code-slide'
+    > .title-slide
+      @import 'title-slide'
+    > * + *
       margin-left: slideMargin

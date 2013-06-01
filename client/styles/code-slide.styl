@@ -1,0 +1,52 @@
+> *
+  position: absolute
+> .text
+  height: textHeight
+  left: 0
+  right: 0
+  top: 0
+  line-height: 20px
+> .coffeescript
+  left: 0
+  right: 50%
+  top: textHeight
+  background-color: #fff
+  resize: none
+  border: none
+  bottom: outputHeight
+  &:focus
+    outline: none
+> .error
+  top: textHeight
+  left: 50%
+  right: 0
+  background-color: #f8f
+  height: lineHeight
+  color: #888
+  text-align: right
+  &.bad
+    color: #f00
+> .javascript
+  left: 50%
+  right: 0
+  top: textHeight + lineHeight
+  background-color: #8ff
+  bottom: outputHeight
+  overflow-y: auto
+  overflow-x: hidden
+  white-space: pre-wrap
+
+> .coffeescript, > .javascript, > .error, > .output
+  font-family: Menlo, Consolas, monospace
+  font-size: 13px
+  line-height: lineHeight
+
+> .output
+  background-color: #f8f
+  height: outputHeight
+  bottom: 0
+  width: 100%
+  overflow-x: hidden
+  overflow-y: auto
+  > .error
+    color: #f00
