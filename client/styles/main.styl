@@ -8,6 +8,8 @@ outputHeight = 200px
 errorHeight = 20px
 pageButtonWidth = 100px
 
+pageButtonHeight = 50px
+
 .deck
   background-color: #88f
   position: absolute
@@ -20,6 +22,18 @@ pageButtonWidth = 100px
     top: 0
     bottom: 0
     background-color: #ff8
+    cursor: pointer
+    i
+      position: absolute
+      top: 50%
+      margin-top: -(pageButtonHeight / 2)
+      width: 100%
+      display: block
+      height: pageButtonHeight
+      line-height: pageButtonHeight
+      text-align: center
+    &:hover
+      background-color: #ee7
 
   .prev-button
     left: 0
