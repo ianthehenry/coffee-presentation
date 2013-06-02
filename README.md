@@ -11,6 +11,10 @@ You'll need the following things installed:
 - `grunt`
   - `npm install -g grunt-cli`
 
+In order to run the `npm install -g` you'll need to `sudo` or `chown -R` your `/usr/local/share/npm`.
+
+Make sure `/usr/local/share/npm/bin` is in your `PATH` for the rest of the example to work.
+
 # Building
 
 After you have those, install the local node dependencies:
