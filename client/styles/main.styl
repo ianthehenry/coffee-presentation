@@ -1,3 +1,13 @@
+slideMargin = 80px
+outputHeight = 200px
+pageButtonWidth = 100px
+lineHeight = 20px
+defaultPadding = 6px
+slideCornerRadius = 0
+pageButtonHeight = 50px
+foregroundColor = #0f0
+backgroundColor = #000
+
 *
   margin: 0
   padding: 0
@@ -5,19 +15,9 @@
 
 body
   font-family: 'Helvetica Nueue', 'Helvetica', sans-serif
-  background-color: #444
-  background-image: url('/static/navy_blue.png')
+  background-color: backgroundColor
   height: 100%
   width: 100%
-
-slideMargin = 80px
-textHeight = 200px
-outputHeight = 200px
-pageButtonWidth = 100px
-lineHeight = 20px
-defaultPadding = 6px
-
-pageButtonHeight = 50px
 
 .deck
   position: absolute
@@ -29,8 +29,8 @@ pageButtonHeight = 50px
     width: pageButtonWidth
     top: 0
     bottom: 0
-    background-color: #eee
-    box-shadow: 0 0 6px #000
+    background-color: backgroundColor
+    color: foregroundColor
     cursor: pointer
     > i
       position: absolute
@@ -41,8 +41,15 @@ pageButtonHeight = 50px
       height: pageButtonHeight
       line-height: pageButtonHeight
       text-align: center
+    &.expected
+      background-color: foregroundColor
+      color: backgroundColor
+    &.expected:hover
+      background-color: darken(foregroundColor, 10%)
+      color: backgroundColor
     &:hover
-      background-color: #ddd
+      background-color: darken(foregroundColor, 90%)
+      color: foregroundColor
 
   > .prev-button
     left: 0

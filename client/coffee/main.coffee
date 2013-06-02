@@ -1,28 +1,25 @@
 class Slide
 class CodeSlide extends Slide
-  constructor: ({@text, @code}) ->
+  constructor: ({@code}) ->
 class TitleSlide extends Slide
   constructor: ({@title, @subtitle}) ->
 
 slides = [
-  new TitleSlide 
-    title: "CoffeeScript"
-    subtitle: "It's like JavaScript but better"
   new CodeSlide
-    text: "This is all interactive so you can play with it as we go."
     code: """print "I've defined a `print` function that will write to this little output box."
   print "Press ⌘↵ or ^↵ to run this code."
   print "Press ^L to clear the output."
   print "Press ^O to revert to the original code (if you make changes)."
   """
+  new TitleSlide
+    title: "CoffeeScript"
+    subtitle: "It's like JavaScript but better"
   new CodeSlide
-    text: "Nunc vulputate, lacus eu gravida mattis, erat magna blandit libero, nec volutpat metus nisl eget ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nam rutrum molestie euismod. Donec justo velit, cursus quis dignissim non, elementum sit amet justo. Proin vestibulum pulvinar erat, ut auctor felis lacinia et. Suspendisse nisl lectus, fringilla nec dignissim porttitor, tincidunt non ante. Integer quis metus tellus, id mollis urna. Fusce augue arcu, sagittis nec egestas non, blandit vitae risus. Maecenas vehicula vestibulum placerat. Donec mattis ultricies lorem, molestie venenatis ante auctor ac. Integer tortor mauris, congue semper venenatis ac, ultricies in arcu. Praesent eget risus consequat est placerat laoreet eu sed nibh. Proin facilisis, ante gravida iaculis ornare, quam dolor mattis nulla, sit amet viverra tortor leo semper purus. Curabitur ac dui nec velit iaculis consequat quis et lacus. Fusce vulputate suscipit dolor sed cursus."
     code: "print 'hey there'"
   new TitleSlide
     title: "async.js"
     subtitle: "Asynchronous control flow"
   new CodeSlide
-    text: "Fusce vel leo eu lacus lobortis varius ut a justo. In hac habitasse platea dictumst. Sed luctus, leo at gravida pharetra, lorem lectus lobortis diam, vel tempor ante metus vitae lectus. Nulla erat nibh, pellentesque vel gravida vitae, sollicitudin id lacus. Mauris volutpat tincidunt lorem at malesuada. Aenean vitae dignissim ligula. Praesent viverra metus erat. Nullam luctus, turpis in suscipit aliquam, elit nulla facilisis tortor, eu ultrices mauris elit a enim. Maecenas et erat diam. Nulla ultrices eleifend est. Sed dignissim blandit dui at suscipit. Cras mattis hendrerit tellus eget sagittis. Phasellus sit amet magna eget enim auctor feugiat. Cras quis enim urna, id rhoncus elit. Fusce accumsan libero sed velit tempus a condimentum odio tempus. Maecenas laoreet aliquam elit, a volutpat elit adipiscing eget."
     code: "options = {port: 100}\n{port} = options\nprint port"
 ]
 
@@ -122,11 +119,11 @@ class DeckView extends View
     for slideView in @slideViews
       $slides.append slideView.render().el
 
-    @gotoSlide 0, {animated: false}
+    @gotoSlide @expectedSlideIndex, {animated: false}
     return this
-    
+
   className: 'deck'
-  initialize: ->
+  initialize: ({@socket}) ->
     $(window).on 'resize', =>
       @gotoSlide @currentSlideIndex, {animated: false}
     $(window).on 'keydown', (e) =>
@@ -139,9 +136,25 @@ class DeckView extends View
         slideView.clearOutput()
       else if e.ctrlKey and e.which == keys.o
         slideView.revertCode()
-      else 
+      else
         return
       e.preventDefault()
+
+    @expectedSlideIndex = 0
+
+    @socket.on 'changeSlide', ({index}) =>
+      console.log 'slide changed'
+      @expectedSlideIndex = index
+      @updateButtons()
+
+  updateButtons: ->
+    $prevButton = @$('.prev-button').removeClass('expected')
+    $nextButton = @$('.next-button').removeClass('expected')
+    if @expectedSlideIndex < @currentSlideIndex
+      $prevButton.addClass 'expected'
+    else if @expectedSlideIndex > @currentSlideIndex
+      $nextButton.addClass 'expected'
+
   nextSlide: ->
     @gotoSlide @currentSlideIndex + 1
   prevSlide: ->
@@ -158,16 +171,17 @@ class DeckView extends View
     else
       $slides.scrollLeft scrollLeft
     if @currentSlideIndex != slideIndex
+      $(':focus').blur()
       @currentSlideIndex = slideIndex
       @currentSlideView().becomeActiveSlide()
+    @updateButtons()
+    @socket.emit 'slideChanged', {index: @currentSlideIndex}
   currentSlideView: ->
     return @slideViews[@currentSlideIndex]
 
 
 $ ->
-  deckView = new DeckView(model: {slides})
-  document.body.appendChild deckView.render().el
+  socket = io.connect('/')
 
-socket = io.connect('/')
-socket.on 'change', (data) ->
-  console.log data
+  deckView = new DeckView {model: {slides}, socket}
+  document.body.appendChild deckView.render().el

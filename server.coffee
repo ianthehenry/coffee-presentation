@@ -21,6 +21,8 @@ server.listen app.get('port'), ->
   console.log "Express server listening on port #{app.get('port')}"
 
 io.sockets.on 'connection', (socket) ->
-  socket.emit 'news', { hello: 'world' }
-  socket.on 'my other event', (data) ->
-    console.log data
+  socket.on 'slideChanged', ({index}) ->
+    console.log "now on slide #{index}"
+  setTimeout ->
+    socket.emit 'changeSlide', { index: 2 }
+  , 1000
