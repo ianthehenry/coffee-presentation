@@ -1,20 +1,23 @@
 *
   margin: 0
   padding: 0
+  box-sizing: border-box
 
 body
   font-family: 'Helvetica Nueue', 'Helvetica', sans-serif
+  background-color: #444
+  background-image: url('/static/navy_blue.png')
 
 slideMargin = 80px
 textHeight = 200px
 outputHeight = 200px
 pageButtonWidth = 100px
 lineHeight = 20px
+defaultPadding = 8px
 
 pageButtonHeight = 50px
 
 .deck
-  background-color: #88f
   position: absolute
   width: 100%
   height: 100%
@@ -24,7 +27,8 @@ pageButtonHeight = 50px
     width: pageButtonWidth
     top: 0
     bottom: 0
-    background-color: #ff8
+    background-color: #eee
+    box-shadow: 0 0 8px #000
     cursor: pointer
     > i
       position: absolute
@@ -36,7 +40,7 @@ pageButtonHeight = 50px
       line-height: pageButtonHeight
       text-align: center
     &:hover
-      background-color: #ee7
+      background-color: #ddd
 
   > .prev-button
     left: 0
@@ -45,9 +49,7 @@ pageButtonHeight = 50px
 
   > .slides
     padding: slideMargin
-    box-sizing: border-box
     white-space: nowrap
-    background-color: #8f8
     position: absolute
     left: pageButtonWidth
     right: pageButtonWidth
@@ -56,14 +58,15 @@ pageButtonHeight = 50px
     > *
       vertical-align: top
       white-space: normal
-      background-color: #f88
       display: inline-block
       width: 100%
       position: relative
       height: 100%
-    > .code-slide
+    > .slide
+      @import 'slide'
+    > .code.slide
       @import 'code-slide'
-    > .title-slide
+    > .title.slide
       @import 'title-slide'
     > * + *
       margin-left: slideMargin

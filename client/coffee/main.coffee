@@ -30,15 +30,15 @@ keys = { enter: 13, l: 76, o: 79 }
 
 class View extends Backbone.View
   render: () ->
-    @$el.html JST[@className](@model)
+    @$el.html JST[@className.split(' ').join('-')](@model)
     return this
 
 class TitleSlideView extends View
-  className: 'title-slide'
+  className: 'title slide'
   becomeActiveSlide: ->
 
 class CodeSlideView extends View
-  className: 'code-slide'
+  className: 'code slide'
   events:
     'keyup .coffeescript': 'updateJavascript'
     'keydown .coffeescript': 'updateJavascript'

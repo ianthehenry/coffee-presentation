@@ -10,31 +10,33 @@
   left: 0
   right: 50%
   top: textHeight
-  background-color: #fff
   resize: none
   border: none
   bottom: outputHeight
-  &:focus
-    outline: none
+  // &:focus
+  //   outline: none
+  //   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5)
 > .error
   top: textHeight
   left: 50%
   right: 0
-  background-color: #f8f
   height: lineHeight
   color: #888
   text-align: right
+  padding: 0 defaultPadding
   &.bad
     color: #f00
 > .javascript
   left: 50%
   right: 0
   top: textHeight + lineHeight
-  background-color: #8ff
   bottom: outputHeight
   overflow-y: auto
   overflow-x: hidden
   white-space: pre-wrap
+
+> .coffeescript, > .javascript, > .output, > .text
+  padding: defaultPadding
 
 > .coffeescript, > .javascript, > .error, > .output
   font-family: Menlo, Consolas, monospace
@@ -42,7 +44,6 @@
   line-height: lineHeight
 
 > .output
-  background-color: #f8f
   height: outputHeight
   bottom: 0
   width: 100%
