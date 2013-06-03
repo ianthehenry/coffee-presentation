@@ -23,7 +23,13 @@ slides = [
     code: "options = {port: 100}\n{port} = options\nprint port"
 ]
 
-keys = { enter: 13, l: 76, o: 79 }
+keys =
+  enter: 13
+  escape: 27
+  left: 37
+  right: 39
+  l: 76
+  o: 79
 
 class View extends Backbone.View
   render: () ->
@@ -33,6 +39,8 @@ class View extends Backbone.View
 class TitleSlideView extends View
   className: 'title slide'
   becomeActiveSlide: ->
+  keydown: ({which, shiftKey, metaKey}) ->
+    return false
 
 class CodeSlideView extends View
   className: 'code slide'
@@ -52,6 +60,19 @@ class CodeSlideView extends View
     catch {message, location: {first_line: line}}
       $error.addClass 'bad'
       $error.text "#{message} on line #{line + 1}"
+
+  keydown: ({which, ctrlKey, metaKey}) ->
+    if (metaKey or ctrlKey) and which == keys.enter
+      @runCode()
+    else if ctrlKey and which == keys.l
+      @clearOutput()
+    else if ctrlKey and which == keys.o
+      @revertCode()
+    else if which == keys.escape
+      $(':focus').blur()
+    else
+      return false
+    return true
 
   render: ->
     super
@@ -119,37 +140,46 @@ class DeckView extends View
     for slideView in @slideViews
       $slides.append slideView.render().el
 
-    @gotoSlide @expectedSlideIndex, {animated: false}
+    @gotoSlide @currentSlideIndex, {animated: false}
     return this
 
   className: 'deck'
-  initialize: ({@socket}) ->
+  initialize: ({@socket, @router}) ->
     $(window).on 'resize', =>
       @gotoSlide @currentSlideIndex, {animated: false}
     $(window).on 'keydown', (e) =>
-      slideView = @currentSlideView()
-      if slideView not instanceof CodeSlideView
-        return
-      if (e.metaKey or e.ctrlKey) and e.which == keys.enter
-        slideView.runCode()
-      else if e.ctrlKey and e.which == keys.l
-        slideView.clearOutput()
-      else if e.ctrlKey and e.which == keys.o
-        slideView.revertCode()
-      else
-        return
+      isInInputField = $(':focus').is('textarea, input')
+      switch e.which
+        when keys.left
+          if isInInputField
+            return
+          else
+            @prevSlide()
+        when keys.right
+          if isInInputField
+            return
+          else
+            @nextSlide()
+        else
+          if not @currentSlideView().keydown(e)
+            return
       e.preventDefault()
 
-    @expectedSlideIndex = 0
+    @currentSlideIndex = 1
 
     @socket.on 'changeSlide', ({index}) =>
-      console.log 'slide changed'
       @expectedSlideIndex = index
       @updateButtons()
+
+    @router.on 'gotoSlide', (index) ->
+      console.log 'something'
+      @gotoSlide index
 
   updateButtons: ->
     $prevButton = @$('.prev-button').removeClass('expected')
     $nextButton = @$('.next-button').removeClass('expected')
+    if not @expectedSlideIndex?
+      return
     if @expectedSlideIndex < @currentSlideIndex
       $prevButton.addClass 'expected'
     else if @expectedSlideIndex > @currentSlideIndex
@@ -167,7 +197,7 @@ class DeckView extends View
 
     scrollLeft = slideIndex * ($slides.outerWidth() - parseInt($slides.css('padding-left'), 10))
     if animated
-      $slides.animate {scrollLeft}, {queue: false}
+      $slides.animate {scrollLeft}, {queue: false, duration: 250}
     else
       $slides.scrollLeft scrollLeft
     if @currentSlideIndex != slideIndex
@@ -175,13 +205,23 @@ class DeckView extends View
       @currentSlideIndex = slideIndex
       @currentSlideView().becomeActiveSlide()
     @updateButtons()
+    @router.navigate("/slides/#{@currentSlideIndex}")
     @socket.emit 'slideChanged', {index: @currentSlideIndex}
   currentSlideView: ->
     return @slideViews[@currentSlideIndex]
 
+class Router extends Backbone.Router
+  routes:
+    '/slides/:index': 'gotoSlide'
+  gotoSlide: ->
+    console.log 'something'
+router = new Router()
+Backbone.history.start({pushState: true})
 
 $ ->
   socket = io.connect('/')
 
-  deckView = new DeckView {model: {slides}, socket}
-  document.body.appendChild deckView.render().el
+
+  deckView = new DeckView {model: {slides}, socket, router}
+  document.body.appendChild deckView.el
+  deckView.render()

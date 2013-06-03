@@ -14,8 +14,11 @@ app.use '/static', express.static('client/static')
 if app.get('env') == 'development'
   app.use express.errorHandler()
 
-app.get '/', (req, res) ->
+index = (req, res) ->
   res.sendfile "client/index.html"
+
+app.get '/', index
+app.get '/slides/:index', index
 
 server.listen app.get('port'), ->
   console.log "Express server listening on port #{app.get('port')}"
