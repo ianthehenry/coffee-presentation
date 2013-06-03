@@ -6,15 +6,18 @@ class TitleSlide extends Slide
 
 slides = [
   new CodeSlide
+    title: "the land of the unknown"
+    code: "print \"Turn back! You've gone the wrong way!\""
+  new TitleSlide
+    title: "CoffeeScript"
+    subtitle: "It's like JavaScript but better"
+  new CodeSlide
     title: "Intro"
     code: """print "I've defined a `print` function that will write to this little output box."
   print "Press ⌘↵ or ^↵ to run this code."
   print "Press ^L to clear the output."
   print "Press ^O to revert to the original code (if you make changes)."
   """
-  new TitleSlide
-    title: "CoffeeScript"
-    subtitle: "It's like JavaScript but better"
   new CodeSlide
     title: "How to write words"
     code: "print 'hey there'"
@@ -147,7 +150,7 @@ class DeckView extends View
     return this
 
   className: 'deck'
-  initialize: ({@socket, @router}) ->
+  initialize: ({@socket, @router, @currentSlideIndex}) ->
     $(window).on 'resize', =>
       @gotoSlide @currentSlideIndex, {animated: false}
     $(window).on 'keydown', (e) =>
@@ -168,15 +171,17 @@ class DeckView extends View
             return
       e.preventDefault()
 
-    @currentSlideIndex = 1
-
     @socket.on 'changeSlide', ({index}) =>
       @expectedSlideIndex = index
       @updateButtons()
 
     @router.on 'gotoSlide', (index) ->
-      console.log 'something'
       @gotoSlide index
+
+    if !_.isNumber(@currentSlideIndex) or @currentSlideIndex < 0
+      @currentSlideIndex = 1
+    else if @currentSlideIndex >= @model.length
+      @currentSlideIndex = @model.length - 1
 
   updateButtons: ->
     $prevButton = @$('.prev-button').removeClass('expected')
@@ -213,18 +218,18 @@ class DeckView extends View
   currentSlideView: ->
     return @slideViews[@currentSlideIndex]
 
+initialPage = 1
 class Router extends Backbone.Router
   routes:
-    '/slides/:index': 'gotoSlide'
-  gotoSlide: ->
-    console.log 'something'
+    'slides/:index': 'gotoSlide'
+  gotoSlide: (index) ->
+    initialPage = index
 router = new Router()
-Backbone.history.start({pushState: true})
+Backbone.history.start {pushState: true}
 
 $ ->
   socket = io.connect('/')
 
-
-  deckView = new DeckView {model: {slides}, socket, router}
+  deckView = new DeckView {model: {slides}, socket, router, currentSlideIndex: initialPage}
   document.body.appendChild deckView.el
   deckView.render()
