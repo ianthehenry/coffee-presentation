@@ -223,7 +223,7 @@ class Router extends Backbone.Router
   routes:
     'slides/:index': 'gotoSlide'
   gotoSlide: (index) ->
-    initialPage = index
+    initialPage = parseInt(index, 10)
 router = new Router()
 Backbone.history.start {pushState: true}
 
