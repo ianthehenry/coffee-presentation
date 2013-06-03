@@ -23,9 +23,32 @@ app.get '/slides/:index', index
 server.listen app.get('port'), ->
   console.log "Express server listening on port #{app.get('port')}"
 
+masterSocket = null
+expectedSlideIndex = 1
+
 io.sockets.on 'connection', (socket) ->
+  socket.emit 'changeSlide', {index: expectedSlideIndex}
   socket.on 'slideChanged', ({index}) ->
-    console.log "now on slide #{index}"
-  setTimeout ->
-    socket.emit 'changeSlide', { index: 2 }
-  , 1000
+    if socket == masterSocket
+      expectedSlideIndex = index
+      socket.broadcast.emit 'changeSlide', {index}
+      console.log "master slide set to #{index}"
+    else
+      console.log "#{socket.id} now on slide #{index}"
+
+  socket.on 'disconnect', ->
+    if socket == masterSocket
+      console.log "master disconnected"
+      masterSocket = null
+    else
+      console.log "#{socket.id} disconnected"
+
+  socket.on 'requestMaster', ->
+    if masterSocket?
+      if masterSocket == socket
+        console.log "you are already the master"
+      else
+        console.log "no, we already have one"
+    else
+      console.log "#{socket.id} is now the master"
+      masterSocket = socket

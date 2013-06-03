@@ -212,9 +212,9 @@ class DeckView extends View
       $(':focus').blur()
       @currentSlideIndex = slideIndex
       @currentSlideView().becomeActiveSlide()
+      @socket.emit 'slideChanged', {index: @currentSlideIndex}
+      @router.navigate("/slides/#{@currentSlideIndex}")
     @updateButtons()
-    @router.navigate("/slides/#{@currentSlideIndex}")
-    @socket.emit 'slideChanged', {index: @currentSlideIndex}
   currentSlideView: ->
     return @slideViews[@currentSlideIndex]
 
@@ -229,6 +229,8 @@ Backbone.history.start {pushState: true}
 
 $ ->
   socket = io.connect('/')
+  window.requestMaster = ->
+    socket.emit 'requestMaster'
 
   deckView = new DeckView {model: {slides}, socket, router, currentSlideIndex: initialPage}
   document.body.appendChild deckView.el
