@@ -1,11 +1,12 @@
 class Slide
 class CodeSlide extends Slide
-  constructor: ({@code}) ->
+  constructor: ({@title, @code}) ->
 class TitleSlide extends Slide
   constructor: ({@title, @subtitle}) ->
 
 slides = [
   new CodeSlide
+    title: "Intro"
     code: """print "I've defined a `print` function that will write to this little output box."
   print "Press ⌘↵ or ^↵ to run this code."
   print "Press ^L to clear the output."
@@ -15,11 +16,13 @@ slides = [
     title: "CoffeeScript"
     subtitle: "It's like JavaScript but better"
   new CodeSlide
+    title: "How to write words"
     code: "print 'hey there'"
   new TitleSlide
     title: "async.js"
     subtitle: "Asynchronous control flow"
   new CodeSlide
+    title: "Destructuring"
     code: "options = {port: 100}\n{port} = options\nprint port"
 ]
 

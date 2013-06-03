@@ -5,7 +5,7 @@
 > .coffeescript
   left: 0
   right: 50%
-  top: 0
+  top: lineHeight
   resize: none
   border: none
   bottom: outputHeight
@@ -16,34 +16,40 @@
 > .error
   left: 50%
   right: 0
-  bottom: outputHeight
+  top: 0
   height: lineHeight
-  color: #888
   padding: 0 defaultPadding
   background-color: #ddd
-  color: foregroundColor
+  text-align: right
   &.bad
     color: #f00
 > .javascript
   left: 50%
   right: 0
-  top: 0
-  bottom: outputHeight + lineHeight
+  top: lineHeight
+  bottom: outputHeight
   border-radius: 0 slideCornerRadius 0 0
   overflow-y: auto
   overflow-x: hidden
   white-space: pre-wrap
-  color: foregroundColor
 
 > .coffeescript, > .javascript, > .output
   padding: defaultPadding
 
-> .coffeescript, > .javascript, > .error, > .output
+> .coffeescript, > .javascript, > .error, > .output, .title
   border: solid 1px foregroundColor
   font-family: Menlo, Consolas, monospace
   font-size: 13px
   line-height: lineHeight
   background-color: backgroundColor
+
+> .title
+  padding: 0 defaultPadding
+  left: 0
+  right: 50%
+  top: 0
+  height: lineHeight
+  line-height: lineHeight
 
 > .output
   height: outputHeight
@@ -52,6 +58,5 @@
   overflow-x: hidden
   overflow-y: auto
   border-radius: 0 0 slideCornerRadius slideCornerRadius
-  color: foregroundColor
   > .error
     color: #f00
