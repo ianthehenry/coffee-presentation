@@ -37,29 +37,29 @@ function Class() {
 }
 Class.prototype.someMethod = function() {
   print("I guess, like, I'm a method?");
-}
+};
 
-instance = new Class()
-instance.someMethod()
+instance = new Class();
+instance.someMethod();
 `
 
-## this
+## `this`
 
 someFunction = () ->
   print @foo
 
-someFunction.call {foo: "call with anything you want"}
-{foo: "using the dot accessor sets this", someFunction}.someFunction()
+someFunction.call { foo: "call with anything you want" }
+{ foo: "calling a function retrieved with the dot accessor sets `this`", someFunction }.someFunction()
 
-x = {foo: "this is legit", someFunction}
+x = { foo: "this is legit", someFunction }
 x.someFunction()
 y = x.someFunction
 y()
-print "y == someFunction? #{y == someFunction}"
+print "y == someFunction? #{ y == someFunction }"
 
-z = y.bind({foo: "bind creates a new function permanently bound to a given this"})
+z = y.bind({ foo: "`bind` creates a new function permanently bound to a given `this`" })
 z()
-print "z == someFunction? #{z == someFunction}"
+print "z == someFunction? #{ z == someFunction }"
 x.z = z
 x.z()
 
@@ -90,22 +90,22 @@ class WhateverTheHell
     print something
 
 instance1 = new WhateverTheHell("The constructor is called when you would expect.")
-instance2 = new WhateverTheHell("Yes, 'consructor' is a magic key name in CoffeeScript.")
+instance2 = new WhateverTheHell("Yes, 'constructor' is a magic key name in CoffeeScript.")
 instance1.constructor("Yes, it's also a normal method. Don't...don't do this ever.")
 
 ## Class methods
 
 class Class
-  @foo: "class attribute"
-  foo: "instance attribute"
+  @method: -> print "class attribute"
+  method: -> print "instance method"
 
 instance = new Class()
-print Class.foo
-print instance.foo
+Class.method()
+instance.method()
 
 ## debugging -- source maps; debugger statement
 
-print "the debugger statement is cool but since this is being evaled it'll break everything"
+print "the debugger statement is cool but since this is being evaled it might break everything"
 print "source maps might be a thing now?"
 
 ## `super()` vs `super`
@@ -131,26 +131,27 @@ x.foo("a string")
 x.bar("a string")
 x.baz("a string")
 
-## `in`/`of`
+## `in` operator
 
 developers = ["Brett", "Daniel", "Babak", "Hamid", "Aaron", "Ian", "Doug"]
 designers = ["Justin", "Bobby", "Tina"]
 
-if "Ian" in developers
-  print "Ian is a developer"
+for name in ["Ian", "Bobby", "Aaron", "Matthew McConaughey"]
+  if name in developers
+    print "#{ name } is a developer"
+  else if name in designers
+    print "#{ name } is a designer"
+  else
+    print "#{ name } does not work at Fog Creek"
 
-if "Aaron" not in designers
-  print "Aaron is not a designer"
+## `of`
 
-object = {foo: 1, bar: 2}
+object = { foo: 1, bar: 2 }
 
-if 'foo' of object
-  print "foo is a key of the object"
+for key in ['foo', 'baz']
+  print "#{ key } #{ if key of object then "is" else "is not" } a key of the object"
 
-if 'baz' of object
-  print "baz is a key of the object"
-
-## `in`/`of` loops; `for own` loops
+## `for x of y` vs `for own x of y`
 
 class SomeClass
   constructor: (@foo, @bar) ->
@@ -174,14 +175,16 @@ if 'method1' of someInstance
 else
   print "This would also be totally legit"
 
-## `in`/`of` comprehensions
+## `in` comprehensions
 
-developers = ["Brett", "Daniel", "Babak", "Hamid", "Aaron", "Ian", "Doug"]
-horribleMistakeThatYouWillAllMake = dev.toUpperCase() for dev in developers
-angryDevs = (dev.toUpperCase() for dev in developers)
+names = ["Brett", "Daniel", "Babak", "Hamid", "Aaron", "Ian", "Doug"]
+usernames  = (dev.toLowerCase() for dev in names)
+jabbrBroke =  dev.toUpperCase() for dev in names # everyone does this at least once
 
-print horribleMistakeThatYouWillAllMake
-print angryDevs
+print usernames
+print jabbrBroke
+
+## `of` comprehensions
 
 devMachines =
   "Aaron": "aarond"
@@ -215,7 +218,7 @@ if perfectEmailRegex.test('ian@fogcreek.com')
 ## `do` keyword for scoping woes
 
 count = 5
-msInterval = 50
+msInterval = 100
 
 for i in [0...count]
   setTimeout ->
@@ -234,8 +237,8 @@ setTimeout ->
 ## Destructuring assignment
 
 sendRequest = (request) ->
-  {url, method, body} = request
-  print "about to send a #{method} request to #{url} with body #{JSON.stringify(body)}"
+  { url, method, body } = request
+  print "about to send a #{ method } request to #{ url } with body #{ JSON.stringify(body) }"
   # exercise for the reader
 
 sendRequest { url: 'https://example.org/examples', method: 'POST', body: { example: { foo: "bar" } } }
@@ -260,14 +263,14 @@ print "---"
 printOptionsTheSexyWay = ({ ports: { dev: devPort, prod: prodPort }, debug }) ->
   print "dev port: #{ devPort }"
   print "production port: #{ prodPort }"
-  print "debug: #{ debug}"
+  print "debug: #{ debug }"
 
 printOptionsTheSexyWay(options)
 
 ## Destructuring @assignment in parameters
 
 class User
-  constructor: ({@name, @age}) ->
+  constructor: ({ @name, @age }) ->
   soundOff: ->
     print "#{ @name } reporting for duty"
 
@@ -296,7 +299,7 @@ printEverything = (things...) ->
 
 printEverything(1, 2, 3)
 
-## `?` operator
+## ? operator
 
 truthyTest = (foo) ->
   print "!!#{ JSON.stringify(foo) }   = #{ !!foo }"
@@ -311,10 +314,11 @@ for foo in [1, 0, [], null, "foo", "", {}, {}.bar]
 
 ## Object shorthand
 
-startServer = ({port}) ->
+startServer = ({ port }) ->
   print "Server listening on port #{ port }"
 
 port = 80
+startServer { port: port }
 startServer { port }
 
 ## Dangling returns
@@ -330,7 +334,7 @@ someFunction()
 ## CoffeeScript has bad things
 
 unless not yes
-  print "wait what"
+  print "wait, what?"
 
 until false isnt true
   print "nooooo"
@@ -339,7 +343,7 @@ count = 0
 loop
   print "because `while true` would be ridiculous"
   count++
-  if count > 3
+  if count == 3
     break
 
 print "yeah, this'll totally print, no big deal, why even wouldn't it" if off
@@ -348,7 +352,48 @@ even though 1 != 2, print "hey there"
 
 ## `->` vs `=>`
 
-print "fuck it, we'll do it live"
+example =
+  foo: 10
+  printImmediately: ->
+    print @foo
+  printDelayedSkinnyArrow: ->
+    setTimeout ->
+      print @foo
+    , 500
+  printDelayedFatArrow: ->
+    setTimeout =>
+      print @foo
+    , 1000
+  printDelayedOldStyle: ->
+    self = this
+    setTimeout =>
+      print self.foo
+    , 1500
+  printDelayedBind: ->
+    setTimeout (-> print self.foo).bind(this), 1500
+
+example.printImmediately()
+example.printDelayedSkinnyArrow()
+example.printDelayedFatArrow()
+
+## `=>` in method definitions
+
+class Example
+  something: 10
+  skinnyArrow: ->
+    print @something
+  fatArrow: =>
+    print @something
+
+example = new Example()
+example.skinnyArrow()
+example.fatArrow()
+print "---"
+x = example.skinnyArrow # yes, you wouldn't usually do this -- this *actually* comes up when passing a function like this as a parameter
+y = example.fatArrow
+x()
+y()
+
 
 # async.js
 
@@ -357,6 +402,7 @@ print "fuck it, we'll do it live"
 ## Asynchronous style
 
 print "there are callbacks"
+print "just go to https://github.com/caolan/async"
 
 ## waterfall
 
