@@ -9,6 +9,9 @@ fs       = require 'fs'
 deck = fs.readFileSync 'deck.coffee', 'utf8'
 slides = []
 
+# The motive for this format was that it would be valid markdown and valid coffeescript.
+# But then I made it valid neither. So, just, yeah. This prevented me from having
+# comments in my code sample. Whatever.
 for line in deck.split('\n')
   if line[0...2] == '##'
     slides.push { title: line[2...].trim(), codeLines: [] }
@@ -43,7 +46,7 @@ index = (req, res) ->
 
 app.get '/', index
 app.get '/deck.js', (req, res) ->
-   # don't write code like this guys
+   # dear interns: don't write code like this
   res.setHeader 'Content-Type', 'text/javascript'
   res.end cachedDeck
 app.get '/slides/:index', index
@@ -51,6 +54,7 @@ app.get '/slides/:index', index
 server.listen app.get('port'), ->
   console.log "Express server listening on port #{app.get('port')}"
 
+# fuck yeah global state
 masterSocket = null
 expectedSlideIndex = 1
 
