@@ -31,13 +31,17 @@ print "debug mode is #{ if options.debug then "on" else "off" }"
 
 ## Classes are weird
 
-`function Class() {}`
-`Class.prototype.someMethod = function() {
+`
+function Class() {
+
+}
+Class.prototype.someMethod = function() {
   print("I guess, like, I'm a method?");
-}`
+}
 
 instance = new Class()
 instance.someMethod()
+`
 
 ## this
 
@@ -60,9 +64,46 @@ x.z = z
 x.z()
 
 # CoffeeScript
-## Actual classes!
+
+"Way better than JavaScript"
+
+## Actual classes! Sort of!
+
+class Animal
+  speak: ->
+    print @word
+
+class Horse extends Animal
+  word: "neeeiiighh"
+
+seabiscuit = new Horse()
+seabiscuit.speak()
+
+Horse::speak = -> print "whatever man, it's all dynamic in the end"
+
+seabiscuit.speak()
+
 ## `constructor` is magic
+
+class WhateverTheHell
+  constructor: (something) ->
+    console.log something
+
 ## Class methods
+
+class Class
+  @foo: "class attribute"
+  foo: "instance attribute"
+
+instance = new Class()
+print Class.foo
+print instance.foo
+
+## debugging -- source maps; debugger statement
+
+print "the debugger statement is cool but since this is being evaled it'll break everything"
+print "source maps might be a thing now?"
+
 ## `super()` vs `super`
 
 class Parent
@@ -194,7 +235,7 @@ sendRequest = (request) ->
   print "about to send a #{method} request to #{url} with body #{JSON.stringify(body)}"
   # exercise for the reader
 
-## Destructuring assignment in arguments
+## Destructuring assignment in parameters
 
 options =
   ports:
@@ -217,6 +258,16 @@ printOptionsTheSexyWay = ({ ports: { dev: devPort, prod: prodPort }, debug }) ->
   print "debug: #{ debug}"
 
 printOptionsTheSexyWay(options)
+
+## Destructuring @assignment in parameters
+
+class User
+  constructor: ({@name, @age}) ->
+  soundOff: ->
+    print "#{ @name } reporting for duty"
+
+ian = new User(name: "Ian Henry", age: 32)
+ian.soundOff()
 
 ## Splats
 
@@ -253,7 +304,17 @@ for foo in [1, 0, [], null, "foo", "", {}, {}.bar]
   print()
 
 ## Object shorthand
+
+startServer = ({port}) ->
+  print "Server listening on port #{ port }"
+
+port = 80
+startServer { port }
+
 ## `->` vs `=>`
+
+print "fuck it, we'll do it live"
+
 ## Dangling returns
 
 someFunction = () ->
@@ -284,9 +345,29 @@ print "yeah, this'll totally print, no big deal, why even wouldn't it" if off
 even though 1 != 2, print "hey there"
 
 # async.js
+
+"we use it"
+
 ## Asynchronous style
+
+print "there are callbacks"
+
 ## waterfall
+
+print "waterfall is cool"
+
 ## parallel
+
+print "use parallel too"
+
 ## map
+
+print "I mean, it's not like list comprehensions are gonna work here"
+
 ## forEach
+
+print "Guys I did not anticipate this taking as long as it did"
+
 ## auto
+
+print "You'll see"
