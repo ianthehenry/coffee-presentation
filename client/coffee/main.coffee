@@ -63,7 +63,7 @@ class CodeSlideView extends View
       $(element).text ((if _.isString(thing) then thing else (if _.isUndefined(thing) then "undefined" else JSON.stringify(thing))) for thing in things).join('')
       $output.append element
       $output.scrollTop $output.prop('scrollHeight')
-    prefix = "(function() { var print = window.uglyHackyGlobalPrintFunction; "
+    prefix = "(function() { var print = window.uglyHackyGlobalPrintFunction; var even = function() {}; var though = function() {};"
     postfix = "}).call(\"you think you're so clever\");"
     try
       eval [prefix, $javascript.text(), postfix].join('')

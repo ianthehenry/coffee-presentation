@@ -87,7 +87,11 @@ seabiscuit.speak()
 
 class WhateverTheHell
   constructor: (something) ->
-    console.log something
+    print something
+
+instance1 = new WhateverTheHell("The constructor is called when you would expect.")
+instance2 = new WhateverTheHell("Yes, 'consructor' is a magic key name in CoffeeScript.")
+instance1.constructor("Yes, it's also a normal method. Don't...don't do this ever.")
 
 ## Class methods
 
@@ -187,7 +191,7 @@ devMachines =
 machineNames = ("#{ hostname }.hq.fogcreek.com" for dev, hostname of devMachines)
 print machineNames
 
-## regular expression literals and `///`
+## regular expression literals and ///
 
 for potentialEmail in ['foo@.com', '@example.com', '@.com', '@.', '', 'foo@example.com']
   if /^[^@]+@[^.]+\.[^.]/.test potentialEmail
@@ -229,11 +233,12 @@ setTimeout ->
 
 ## Destructuring assignment
 
-request = { url: 'https://example.org/examples', method: 'POST', body: { example: { foo: "bar" } } }
 sendRequest = (request) ->
   {url, method, body} = request
   print "about to send a #{method} request to #{url} with body #{JSON.stringify(body)}"
   # exercise for the reader
+
+sendRequest { url: 'https://example.org/examples', method: 'POST', body: { example: { foo: "bar" } } }
 
 ## Destructuring assignment in parameters
 
@@ -271,7 +276,7 @@ ian.soundOff()
 
 ## Splats
 
-ArrayToString = Array::toString
+_ArrayProtoToString = Array::toString # ignore this
 Array::toString = -> "[#{@join(', ')}]" # my favorite is Objective-C's `[NSString stringWithFormat:@"@%@", username]`
 
 dummyList = [1, 2, 3, 4, 5, 6, 7]
@@ -281,6 +286,8 @@ print "#{ car } #{ cdr }"
 [head, body..., tail] = dummyList
 print "#{ head } #{ body } #{ tail }"
 
+Array::toString = _ArrayProtoToString # nothing to see here
+
 ## Splats for n-ary functions
 
 printEverything = (things...) ->
@@ -288,7 +295,6 @@ printEverything = (things...) ->
     print thing
 
 printEverything(1, 2, 3)
-Array::toString = ArrayToString
 
 ## `?` operator
 
@@ -310,10 +316,6 @@ startServer = ({port}) ->
 
 port = 80
 startServer { port }
-
-## `->` vs `=>`
-
-print "fuck it, we'll do it live"
 
 ## Dangling returns
 
@@ -343,6 +345,10 @@ loop
 print "yeah, this'll totally print, no big deal, why even wouldn't it" if off
 
 even though 1 != 2, print "hey there"
+
+## `->` vs `=>`
+
+print "fuck it, we'll do it live"
 
 # async.js
 
