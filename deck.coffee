@@ -370,6 +370,10 @@ print "yeah, this'll totally print, no big deal, why even wouldn't it" if off
 
 even though 1 != 2, print "hey there"
 
+## Style guide
+
+print "https://github.com/FogCreek/coffeescript-style-guide"
+
 ## `->` vs `=>`
 
 example =
