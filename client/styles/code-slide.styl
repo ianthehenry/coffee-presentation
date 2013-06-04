@@ -31,10 +31,10 @@
   border-radius: 0 slideCornerRadius 0 0
   overflow-y: auto
   overflow-x: hidden
-  white-space: pre-wrap
 
 > .coffeescript, > .javascript, > .output
   padding: defaultPadding
+  white-space: pre-wrap
 
 > .coffeescript, > .javascript, > .error, > .output, .title
   border: solid 1px foregroundColor
@@ -60,3 +60,5 @@
   border-radius: 0 0 slideCornerRadius slideCornerRadius
   > .error
     color: #f00
+  > *
+    min-height: lineHeight

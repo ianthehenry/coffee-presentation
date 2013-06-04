@@ -1,40 +1,8 @@
-class Slide
-class CodeSlide extends Slide
-  constructor: ({@title, @code}) ->
-class TitleSlide extends Slide
-  constructor: ({@title, @subtitle}) ->
-
-slides = [
-  new CodeSlide
-    title: "the land of the unknown"
-    code: "print \"Turn back! You've gone the wrong way!\""
-  new TitleSlide
-    title: "CoffeeScript"
-    subtitle: "It's like JavaScript but better"
-  new CodeSlide
-    title: "Intro"
-    code: """print "I've defined a `print` function that will write to this little output box."
-  print "Press ⌘↵ or ^↵ to run this code."
-  print "Press ^L to clear the output."
-  print "Press ^O to revert to the original code (if you make changes)."
-  """
-  new CodeSlide
-    title: "How to write words"
-    code: "print 'hey there'"
-  new TitleSlide
-    title: "async.js"
-    subtitle: "Asynchronous control flow"
-  new CodeSlide
-    title: "Destructuring"
-    code: "options = {port: 100}\n{port} = options\nprint port"
-]
-
 keys =
   enter: 13
   escape: 27
   left: 37
   right: 39
-  l: 76
   o: 79
 
 class View extends Backbone.View
@@ -69,9 +37,8 @@ class CodeSlideView extends View
 
   keydown: ({which, ctrlKey, metaKey}) ->
     if (metaKey or ctrlKey) and which == keys.enter
-      @runCode()
-    else if ctrlKey and which == keys.l
       @clearOutput()
+      @runCode()
     else if ctrlKey and which == keys.o
       @revertCode()
     else if which == keys.escape
@@ -90,15 +57,10 @@ class CodeSlideView extends View
   runCode: ->
     $javascript = @$('.javascript')
     $output = @$('.output')
-    window.uglyHackyGlobalPrintFunction = (thing) =>
-      if _.isObject(thing)
-        stringForm = JSON.stringify(thing)
-      else
-        stringForm = thing.toString()
-
+    window.uglyHackyGlobalPrintFunction = (things...) =>
       element = document.createElement('div')
       $(element).addClass 'printed'
-      $(element).text stringForm
+      $(element).text ((if _.isString(thing) then thing else (if _.isUndefined(thing) then "undefined" else JSON.stringify(thing))) for thing in things).join('')
       $output.append element
       $output.scrollTop $output.prop('scrollHeight')
     prefix = "(function() { var print = window.uglyHackyGlobalPrintFunction; "
@@ -136,12 +98,10 @@ class DeckView extends View
 
     @slideViews = []
     for slide in @model.slides
-      if slide instanceof TitleSlide
-        @slideViews.push new TitleSlideView(model: slide)
-      else if slide instanceof CodeSlide
+      if 'code' of slide
         @slideViews.push new CodeSlideView(model: slide)
       else
-        throw "i don't know what to do with that"
+        @slideViews.push new TitleSlideView(model: slide)
     $slides = @$('.slides')
     for slideView in @slideViews
       $slides.append slideView.render().el
@@ -211,9 +171,9 @@ class DeckView extends View
     if @currentSlideIndex != slideIndex
       $(':focus').blur()
       @currentSlideIndex = slideIndex
-      @currentSlideView().becomeActiveSlide()
       @socket.emit 'slideChanged', {index: @currentSlideIndex}
       @router.navigate("/slides/#{@currentSlideIndex}")
+    @currentSlideView().becomeActiveSlide()
     @updateButtons()
   currentSlideView: ->
     return @slideViews[@currentSlideIndex]

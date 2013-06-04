@@ -4,6 +4,30 @@ http     = require 'http'
 app      = express()
 server   = http.createServer(app)
 io       = require('socket.io').listen(server)
+fs       = require 'fs'
+
+deck = fs.readFileSync 'deck.coffee', 'utf8'
+slides = []
+
+for line in deck.split('\n')
+  if line[0...2] == '##'
+    slides.push { title: line[2...].trim(), codeLines: [] }
+  else if line[0] == '#'
+    slides.push {title: line[1...].trim() }
+  else
+    lastSlide = slides[slides.length - 1]
+    if 'codeLines' of lastSlide
+      lastSlide.codeLines.push line
+    else
+      if line.length > 0
+        lastSlide.subtitle = line
+
+for slide in slides
+  if 'codeLines' of slide
+    slide.code = slide.codeLines.join('\n').trim()
+    delete slide.codeLines
+
+cachedDeck = "window.slides = #{ JSON.stringify(slides) };"
 
 app.set 'port', args.port
 app.use express.logger('dev')
@@ -18,6 +42,10 @@ index = (req, res) ->
   res.sendfile "client/index.html"
 
 app.get '/', index
+app.get '/deck.js', (req, res) ->
+   # don't write code like this guys
+  res.setHeader 'Content-Type', 'text/javascript'
+  res.end cachedDeck
 app.get '/slides/:index', index
 
 server.listen app.get('port'), ->

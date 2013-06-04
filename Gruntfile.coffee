@@ -9,7 +9,7 @@ module.exports = (grunt) ->
   grunt.initConfig
     handlebars:
       options:
-        processName: (filename) -> 
+        processName: (filename) ->
           [path..., name, extension] = filename.split(/\.|\//)
           return name
         partialsPathRegex: /.*/
@@ -41,12 +41,12 @@ module.exports = (grunt) ->
           'client/static/all.js': 'out/all.js'
           'client/static/main.css': 'out/main.css'
     shell:
-      focus: 
+      focus:
         command: "osascript -e 'tell application \"Google Chrome\" \n tell active tab of first window \n reload \n end tell \n activate \n end tell'"
-      restartnode: 
+      restartnode:
         command: "osascript -e 'tell application \"iTerm\" \n activate \n tell the current terminal \n tell the current session \n write text (character id 3) & \"coffee server.coffee\" \n end tell \n end tell \n end tell \n'"
       sleep:
-        command: "sleep 0.3"
+        command: "sleep 0.4"
 
   grunt.registerTask 'all.js', ['handlebars', 'coffee', 'concat']
   grunt.registerTask 'default', ['all.js', 'stylus', 'copy']
