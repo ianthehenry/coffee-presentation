@@ -234,6 +234,16 @@ setTimeout ->
       , i * msInterval
 , msInterval * count
 
+## Default arguments
+
+myAwesomePrintFunction = (message, capsLock = true) ->
+  if capsLock
+    message = message.toUpperCase()
+  print message
+
+myAwesomePrintFunction "doug"
+myAwesomePrintFunction "jabbr broke again", false
+
 ## Destructuring assignment
 
 sendRequest = (request) ->
@@ -290,6 +300,16 @@ print "#{ car } #{ cdr }"
 print "#{ head } #{ body } #{ tail }"
 
 Array::toString = _ArrayProtoToString # nothing to see here
+
+## Default arguments in destructuring assignment
+
+myOtherPrintFunction = ({message: message, capsLock }) ->
+  capsLock ?= true
+  if capsLock
+    message = message.toUpperCase()
+  print message
+
+myOtherPrintFunction { message: "good morning" }
 
 ## Splats for n-ary functions
 
